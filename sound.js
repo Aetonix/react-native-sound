@@ -13,6 +13,13 @@ function isRelativePath(path) {
   return !/^(\/|http(s?)|asset)/.test(path);
 }
 
+// Hash function to compute key from the filename
+function djb2Code(str) {
+  var hash = 5381, i, char;
+  for (i = 0; i < str.length; i++) {
+      char = str.charCodeAt(i);
+      hash = ((hash << 5) + hash) + char; /* hash * 33 + c */
+}
 function Sound(filename, basePath, onError, options) {
   var asset = resolveAssetSource(filename);
   if (asset) {
@@ -67,6 +74,9 @@ function Sound(filename, basePath, onError, options) {
       if (typeof props.numberOfChannels === 'number') {
         this._numberOfChannels = props.numberOfChannels;
       }
+    }
+    if (options && options.duration && typeof options.duration === "number") {
+      this._duration = options.duration;
     }
     if (error === null) {
       this._loaded = true;

@@ -19,6 +19,8 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.modules.core.ExceptionsManagerModule;
 
+import FFmpegMediaMetadataRetriever;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,7 +111,11 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
         callbackWasCalled = true;
 
         WritableMap props = Arguments.createMap();
-        props.putDouble("duration", mp.getDuration() * .001);
+        int dur = mp.getDuration();
+        if (dur <= 0) {
+          dur = getDurationInMilliseconds(fileName);
+        }
+        props.putDouble("duration", dur * .001);
         try {
           callback.invoke(NULL, props);
         } catch(RuntimeException runtimeException) {
@@ -151,6 +157,14 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
       // prepares the audio for us already. So we catch and ignore this error
       Log.e("RNSoundModule", "Exception", ignored);
     }
+  }
+
+  private int getDurationInMilliseconds(String path) {
+    FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
+    mmr.setDataSource(path);
+    int duration = Integer.parseInt(mmr.extractMetadata(FFmpegMediaMetadataRetriever.METADATA_KEY_DURATION));
+    mmr.release();
+    return duration;
   }
 
   protected MediaPlayer createMediaPlayer(final String fileName) {
