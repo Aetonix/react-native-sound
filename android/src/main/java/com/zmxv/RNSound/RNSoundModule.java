@@ -19,7 +19,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.modules.core.ExceptionsManagerModule;
 
-import FFmpegMediaMetadataRetriever;
+import com.github.wseemann.media.FFmpegMediaMetadataRetriever;
 
 import java.io.File;
 import java.util.HashMap;
